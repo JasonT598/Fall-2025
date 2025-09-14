@@ -19,8 +19,8 @@
 ===============================================================================
 */
 
-static const float BOUNCE_SOUND_MIN_VELOCITY	= 200.0f;
-static const float BOUNCE_SOUND_MAX_VELOCITY	= 400.0f;
+static const float BOUNCE_SOUND_MIN_VELOCITY	= 2000.0f;
+static const float BOUNCE_SOUND_MAX_VELOCITY	= 4000.0f;
 
 const idEventDef EV_Explode( "<explode>", NULL );
 const idEventDef EV_Fizzle( "<fizzle>", NULL );
@@ -1186,7 +1186,7 @@ void idProjectile::Explode( const trace_t *collision, const bool showExplodeFX, 
 	physicsObj.PutToRest();
 
 	state = EXPLODED;
-
+	
 	if ( gameLocal.isClient ) {
 		return;
 	}

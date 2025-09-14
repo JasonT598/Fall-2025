@@ -102,7 +102,7 @@ void rvWeaponRocketLauncher::Spawn ( void ) {
 	attackDict.GetFloat ( "speed", "0", guideSpeedFast );
 	guideSpeedSlow = guideSpeedFast * f;
 	
-	reloadRate = SEC2MS ( spawnArgs.GetFloat ( "reloadRate", ".8" ) );
+	reloadRate = SEC2MS ( spawnArgs.GetFloat ( "reloadRate", "0.0" ) );
 	
 	guideAccelTime = SEC2MS ( spawnArgs.GetFloat ( "lockAccelTime", ".25" ) );
 	
@@ -117,14 +117,14 @@ void rvWeaponRocketLauncher::Spawn ( void ) {
 	animNum = viewModel->GetAnimator()->GetAnim ( "reload" );
 	if ( animNum ) {
 		anim = (idAnim*)viewModel->GetAnimator()->GetAnim ( animNum );
-		rate = (float)anim->Length() / (float)SEC2MS(spawnArgs.GetFloat ( "reloadRate", ".8" ));
+		rate = (float)anim->Length() / (float)SEC2MS(spawnArgs.GetFloat ( "reloadRate", "0.0" ));
 		anim->SetPlaybackRate ( rate );
 	}
 
 	animNum = viewModel->GetAnimator()->GetAnim ( "reload_empty" );
 	if ( animNum ) {
 		anim = (idAnim*)viewModel->GetAnimator()->GetAnim ( animNum );
-		rate = (float)anim->Length() / (float)SEC2MS(spawnArgs.GetFloat ( "reloadRate", ".8" ));
+		rate = (float)anim->Length() / (float)SEC2MS(spawnArgs.GetFloat ( "reloadRate", "0.0" ));
 		anim->SetPlaybackRate ( rate );
 	}
 
@@ -445,13 +445,13 @@ stateResult_t rvWeaponRocketLauncher::State_Fire ( const stateParms_t& parms ) {
 	};	
 	switch ( parms.stage ) {
 		case STAGE_INIT:
-			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));		
-			Attack ( false, 1, spread, 0, 1.0f );
+			nextAttackTime = gameLocal.time + (fireRate * 0.05f);		
+			Attack ( false, 10, spread, 0, 0.05f );
 			PlayAnim ( ANIMCHANNEL_LEGS, "fire", parms.blendFrames );	
 			return SRESULT_STAGE ( STAGE_WAIT );
 	
 		case STAGE_WAIT:			
-			if ( wsfl.attack && gameLocal.time >= nextAttackTime && ( gameLocal.isClient || AmmoInClip ( ) ) && !wsfl.lowerWeapon ) {
+			if ( wsfl.attack && gameLocal.time >= nextAttackTime && !wsfl.lowerWeapon ) {
 				SetState ( "Fire", 0 );
 				return SRESULT_DONE;
 			}
@@ -516,59 +516,9 @@ rvWeaponRocketLauncher::State_Rocket_Reload
 ================
 */
 stateResult_t rvWeaponRocketLauncher::State_Rocket_Reload ( const stateParms_t& parms ) {
-	enum {
-		STAGE_INIT,
-		STAGE_WAIT,
-	};	
-	
-	switch ( parms.stage ) {
-		case STAGE_INIT: {
-			const char* animName;
-			int			animNum;
-
-			if ( idleEmpty ) {
-				animName = "ammo_pickup";
-				idleEmpty = false;
-			} else if ( AmmoAvailable ( ) == AmmoInClip( ) + 1 ) {
-				animName = "reload_empty";
-			} else {
-				animName = "reload";
-			}
-			
-			animNum = viewModel->GetAnimator()->GetAnim ( animName );
-			if ( animNum ) {
-				idAnim* anim;
-				anim = (idAnim*)viewModel->GetAnimator()->GetAnim ( animNum );				
-				anim->SetPlaybackRate ( (float)anim->Length() / (reloadRate * owner->PowerUpModifier ( PMOD_FIRERATE )) );
-			}
-
-			PlayAnim( ANIMCHANNEL_TORSO, animName, parms.blendFrames );				
-
-			return SRESULT_STAGE ( STAGE_WAIT );
-		}
-		
-		case STAGE_WAIT:
-			if ( AnimDone ( ANIMCHANNEL_TORSO, 0 ) ) {				
-				if ( !wsfl.attack && gameLocal.time > nextAttackTime && AmmoInClip ( ) < ClipSize( ) && AmmoAvailable() > AmmoInClip() ) {
-					SetRocketState ( "Rocket_Reload", 0 );
-				} else {
-					SetRocketState ( "Rocket_Idle", 0 );
-				}
-				return SRESULT_DONE;
-			}
-			/*
-			if ( gameLocal.isMultiplayer && gameLocal.time > nextAttackTime && wsfl.attack ) {
-				if ( AmmoInClip ( ) == 0 )
-				{
-					AddToClip ( ClipSize() );
-				}
-				SetRocketState ( "Rocket_Idle", 0 );
-				return SRESULT_DONE;
-			}
-			*/
-			return SRESULT_WAIT;
-	}
-	return SRESULT_ERROR;
+	AddToClip(ClipSize());
+	SetRocketState("Rocket_Idle", 0);
+	return SRESULT_DONE;
 }
 
 /*
