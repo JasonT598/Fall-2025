@@ -19,16 +19,16 @@ Try not to be spotted; they can kill you much quicker than you can kill them
 
 Feature #1
 10 Assassin's Creed-Inspired Weapons
-Hidden Blade
-Sword
-Dagger
-Hidden Gun(Blaster)
-Musket(Single Shot Rifle)
-Grenade Launcher(NoiseMaker)
-Throwing Knives
-Axe
-Spear
-Mace
+1. Hidden Blade
+2. Sword
+3. Dagger
+4. Hidden Gun(Blaster)
+5. Musket(Single Shot Rifle)
+6. Grenade Launcher(NoiseMaker)
+7. Throwing Knives
+8. Axe
+9. Spear
+10. Mace
 
 Feature #2
 5 Useable Items from Assassin's Creed
