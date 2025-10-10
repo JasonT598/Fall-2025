@@ -19,34 +19,35 @@ Try not to be spotted; they can kill you much quicker than you can kill them
 
 Feature #1
 10 Assassin's Creed-Inspired Weapons
-1. Hidden Blade
-2. Sword
-3. Dagger
-4. Hidden Gun(Blaster)
-5. Musket(Single Shot Rifle)
-6. Grenade Launcher(NoiseMaker)
-7. Throwing Knives
-8. Axe
-9. Spear
-10. Mace
+Hidden Blade
+Sword
+Dagger
+Hidden Gun(Blaster)
+Musket(Single Shot Rifle)
+Grenade Launcher(NoiseMaker)
+Throwing Knives
+Axe
+Spear
+Mace
+
 Feature #2
 5 Useable Items from Assassin's Creed
-1. Smoke Bomb
-2. Poison
-3. Throwing Knives
-4. Noise Maker
-5. Silent Gun
+Smoke Bomb
+Poison
+Throwing Knives
+Noise Maker
+Silent Gun
 Feature #3
 5 Stealth Mechanics
-1. Assassinate
-2. Throwing Knife Kill
-3. Toggled Crouch
-4. Smoke Bombs
-5. Silent Gun
+Assassinate
+Throwing Knife Kill
+Toggled Crouch
+Smoke Bombs
+Silent Gun
 Feature #4
 Instant Kill Ability(Assassinate From Behind)
 Feature #5
 3 Mission Objectives
-1. Assassinate
-2. Pickpocket
-3. Poison an Enemy
+Assassinate
+Pickpocket
+Poison an Enemy
