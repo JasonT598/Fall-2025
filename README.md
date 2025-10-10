@@ -37,6 +37,7 @@ Poison
 Throwing Knives
 Noise Maker
 Silent Gun
+
 Feature #3
 5 Stealth Mechanics
 Assassinate
@@ -44,8 +45,10 @@ Throwing Knife Kill
 Toggled Crouch
 Smoke Bombs
 Silent Gun
+
 Feature #4
 Instant Kill Ability(Assassinate From Behind)
+
 Feature #5
 3 Mission Objectives
 Assassinate
