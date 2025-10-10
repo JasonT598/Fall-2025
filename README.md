@@ -32,11 +32,11 @@ Feature #1
 
 Feature #2
 5 Useable Items from Assassin's Creed
-Smoke Bomb
-Poison
-Throwing Knives
-Noise Maker
-Silent Gun
+1. Smoke Bomb
+2. Poison
+3. Throwing Knives
+4. Noise Maker
+5. Silent Gun
 
 Feature #3
 5 Stealth Mechanics
