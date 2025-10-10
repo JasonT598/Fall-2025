@@ -40,17 +40,17 @@ Feature #2
 
 Feature #3
 5 Stealth Mechanics
-Assassinate
-Throwing Knife Kill
-Toggled Crouch
-Smoke Bombs
-Silent Gun
+1. Assassinate
+2. Throwing Knife Kill
+3. Toggled Crouch
+4. Smoke Bombs
+5. Silent Gun
 
 Feature #4
-Instant Kill Ability(Assassinate From Behind)
+1. Instant Kill Ability(Assassinate From Behind)
 
 Feature #5
 3 Mission Objectives
-Assassinate
-Pickpocket
-Poison an Enemy
+1. Assassinate
+2. Pickpocket
+3. Poison an Enemy
