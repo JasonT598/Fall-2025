@@ -26,7 +26,7 @@
 // RAVEN END
 
 #ifdef _WIN32
-#include "TypeInfo.h"
+#include "TypeInfo"
 #else
 #include "NoGameTypeInfo.h"
 #endif
@@ -171,7 +171,7 @@ void Cmd_ListSpawnArgs_f( const idCmdArgs &args ) {
 
 	for ( i = 0; i < ent->spawnArgs.GetNumKeyVals(); i++ ) {
 		const idKeyValue *kv = ent->spawnArgs.GetKeyVal( i );
-		gameLocal.Printf( "\"%s\"  "S_COLOR_WHITE"\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
+		gameLocal.Printf( "\"%s\"  " S_COLOR_WHITE "\"%s\"\n", kv->GetKey().c_str(), kv->GetValue().c_str() );
 	}
 }
 
@@ -3022,6 +3022,24 @@ void Cmd_ShuffleTeams_f( const idCmdArgs& args ) {
 	gameLocal.mpGame.ShuffleTeams();
 }
 
+void Cmd_ShowHelp_f(const idCmdArgs& args)
+{
+	idPlayer* player = gameLocal.GetLocalPlayer();
+	if (!player)
+	{
+		return;
+	}
+
+	gameLocal.Printf("Welcome to AC Martian\n");
+	gameLocal.Printf("This is an Assassin's Creed style mod, adding features from those games into Quake 4, and called Martian since the planet is red\n");
+	gameLocal.Printf("Included are:\n");
+	gameLocal.Printf("- 10 Assassin's Creed Weapons\n");
+	gameLocal.Printf("- 5 Assassin's Creed Items\n");
+	gameLocal.Printf("- Instant Kill Ability with F\n");
+	gameLocal.Printf("- New Stealth Mechanics\n");
+	gameLocal.Printf("- Mission Objectives\n");
+}
+
 #ifndef _FINAL
 void Cmd_ClientOverflowReliable_f( const idCmdArgs& args ) {
 	idBitMsg	outMsg;
@@ -3036,6 +3054,7 @@ void Cmd_ClientOverflowReliable_f( const idCmdArgs& args ) {
 		networkSystem->ClientSendReliableMessage( outMsg );
 	}
 }
+
 #endif
 
 /*
@@ -3231,7 +3250,8 @@ void idGameLocal::InitConsoleCommands( void ) {
 // squirrel: Mode-agnostic buymenus
 	cmdSystem->AddCommand( "buyMenu",				Cmd_ToggleBuyMenu_f,		CMD_FL_GAME,				"Toggle buy menu (if in a buy zone and the game type supports it)" );
 	cmdSystem->AddCommand( "buy",					Cmd_BuyItem_f,				CMD_FL_GAME,				"Buy an item (if in a buy zone and the game type supports it)" );
-// RITUAL END
+	cmdSystem->AddCommand("ShowHelp", Cmd_ShowHelp_f, CMD_FL_GAME, "Shows the Mod and It's Features");
+	// RITUAL END
 
 }
 

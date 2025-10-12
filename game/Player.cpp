@@ -1832,7 +1832,7 @@ void idPlayer::Spawn( void ) {
 	InitAASLocation();
 	
 	skin = renderEntity.customSkin;
-
+	gameLocal.UpdateObjectiveHUD(OBJ_ASSASSINATE, "^7Objective: ^3Assassinate Target");
 	// only the local player needs guis
 	// for server netdemos that have no local player, we use demo_* guis in idGameLocal
 	if ( !gameLocal.isMultiplayer || entityNumber == gameLocal.localClientNum ) {
@@ -3644,9 +3644,11 @@ void idPlayer::DrawHUD( idUserInterface *_hud ) {
 		}		
 	}
 
+
 	if ( disableHud || influenceActive != INFLUENCE_NONE || privateCameraView || !_hud || !g_showHud.GetBool() ) {
 		return;
 	}
+
 
 	if ( objectiveSystemOpen ) {
 		if ( !GuiActive() ) {
@@ -3779,6 +3781,20 @@ void idPlayer::DrawHUD( idUserInterface *_hud ) {
 			overlayHudTime = 0;
 		}
 	}
+	if (IsCrouching()) {
+		idVec4 stealthcolour(1.0f, 0.0f, 0.0f, 1.0f);
+		//gameLocal.Printf("The Crouch is Running Boss");
+		//int width = renderSystem->GetScreenWidth();
+		//int height = renderSystem->GetScreenHeight();
+		//int x = width * 0.05f;
+		//int y = height * 0.05f;
+		renderSystem->DrawBigStringExt(
+			50, 20,
+			"STEALTH MODE",
+			stealthcolour,
+			false,
+			NULL);
+	}
 }
 
 /*
@@ -3836,6 +3852,7 @@ void idPlayer::EnterCinematic( void ) {
    		weapon->PreSave();
 		weapon->EnterCinematic();
    	}
+
 
 	// Reset state flags   
 	memset ( &pfl, 0, sizeof(pfl) );

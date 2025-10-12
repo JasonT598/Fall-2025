@@ -1306,6 +1306,12 @@ void idGameLocal::LoadMap( const char *mapName, int randseed ) {
 
 	InitAsyncNetwork();
 
+	for( int i = 0; i < NUM_OBJECTIVES; i++ ) {
+		missionStatus[i] = MISSION_INACTIVE;
+	}
+	missionStatus[ OBJ_ASSASSINATE ] = MISSION_ACTIVE;
+	activeObjectiveID = OBJ_ASSASSINATE;
+
 	// these can changed based upon sp / mp
 	mHz = common->GetUserCmdHz();
 	msec = common->GetUserCmdMSec();
@@ -1487,6 +1493,31 @@ void idGameLocal::LoadMap( const char *mapName, int randseed ) {
 // ddynerman: ambient light list
 	ambientLights.Clear();
 // RAVEN END
+}
+
+void idGameLocal::UpdateObjectiveHUD(objectiveID_t objID, const char* newText) {
+	idUserInterface* hud = gameLocal.gameUI;
+
+	if (hud)
+	{
+		activeObjectiveID = objID;
+		hud->SetStateString("currentobjective", newText);
+	}
+}
+
+void idGameLocal::AdvanceMission(objectiveID_t nextObjID, const char* nextObjText)
+{
+	if (activeObjectiveID >= 0 && activeObjectiveID < NUM_OBJECTIVES)
+	{
+		missionStatus[ activeObjectiveID ] = MISSION_COMPLETE;
+	}
+
+	if( nextObjID >= 0 && nextObjID < NUM_OBJECTIVES )
+	{
+		missionStatus[ nextObjID ] = MISSION_ACTIVE;
+	}
+
+	UpdateObjectiveHUD( nextObjID, nextObjText );
 }
 
 /*

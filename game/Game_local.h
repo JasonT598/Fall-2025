@@ -148,6 +148,19 @@ typedef struct snapshot_s {
 	struct snapshot_s *		next;
 } snapshot_t;
 
+typedef enum {
+	MISSION_INACTIVE,
+	MISSION_ACTIVE,
+	MISSION_COMPLETE
+} missionStatus_t;
+
+typedef enum {
+	OBJ_ASSASSINATE,
+	OBJ_PICKPOCKET,
+	OBJ_POISON,
+	NUM_OBJECTIVES
+} objectiveID_t;
+
 const int MAX_EVENT_PARAM_SIZE		= 128;
 
 typedef struct entityNetEvent_s {
@@ -339,6 +352,8 @@ public:
 	bool					sortPushers;			// true if active lists needs to be reordered to place pushers at the front
 	bool					sortTeamMasters;		// true if active lists needs to be reordered to place physics team masters before their slaves
 	idDict					persistentLevelInfo;	// contains args that are kept around between levels
+	idUserInterface* gameUI;
+
 
 // RAVEN BEGIN
 // bdube: client entities
@@ -569,6 +584,8 @@ public:
 	virtual const idVec3	GetCurrentGravity( rvClientEntity* entity ) const;
 	virtual idEntity*		ReferenceScriptObjectProxy( const char* scriptObjectName );
 	virtual void			ReleaseScriptObjectProxy( const char* proxyName );
+	void UpdateObjectiveHUD(objectiveID_t objID, const char *newText );
+	void AdvanceMission(objectiveID_t nextObjID, const char *nextObjText);
 
 // rjohnson: entity usage stats
 	virtual void			ListEntityStats( const idCmdArgs &args );
@@ -928,6 +945,8 @@ private:
 
 	int						spawnCount;
 	bool					isMapEntity[ MAX_GENTITIES ]; // it's handy to know which entities are part of the map
+	missionStatus_t missionStatus[ NUM_OBJECTIVES ];			// current status of the mission
+	objectiveID_t activeObjectiveID;					// current objective being tracked
 // RAVEN BEGIN
 // bdube: client entities	
 	int						clientSpawnCount;
