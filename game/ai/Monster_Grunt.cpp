@@ -39,6 +39,7 @@ private:
 	stateResult_t		State_Torso_Enrage		( const stateParms_t& parms );
 	stateResult_t		State_Torso_Pain		( const stateParms_t& parms );
 	stateResult_t		State_Torso_LeapAttack	( const stateParms_t& parms );
+	stateResult_t		State_Legs_PassiveIdle  (const stateParms_t& parms);
 
 	CLASS_STATES_PROTOTYPE ( rvMonsterGrunt );
 };
@@ -67,6 +68,7 @@ void rvMonsterGrunt::Spawn ( void ) {
 	actionMeleeMoveAttack.Init	( spawnArgs, "action_meleeMoveAttack",	NULL,				AIACTIONF_ATTACK );
 	actionChaingunAttack.Init	( spawnArgs, "action_chaingunAttack",	NULL,				AIACTIONF_ATTACK );
 	actionLeapAttack.Init		( spawnArgs, "action_leapAttack",		"Torso_LeapAttack",	AIACTIONF_ATTACK );
+	SetState("State_Legs_PassiveIdle", 0);
 
 	// Enraged to start?
 	if ( spawnArgs.GetBool ( "preinject" ) ) {
@@ -244,6 +246,7 @@ CLASS_STATES_DECLARATION ( rvMonsterGrunt )
 	STATE ( "Torso_Enrage",		rvMonsterGrunt::State_Torso_Enrage )
 	STATE ( "Torso_Pain",		rvMonsterGrunt::State_Torso_Pain )
 	STATE ( "Torso_LeapAttack",	rvMonsterGrunt::State_Torso_LeapAttack )
+	STATE ("Legs_PassiveIdle", rvMonsterGrunt::State_Legs_PassiveIdle)
 END_CLASS_STATES
 
 /*
@@ -257,6 +260,27 @@ stateResult_t rvMonsterGrunt::State_Torso_Pain ( const stateParms_t& parms ) {
 		pain.loopEndTime = 0;
 	}
 	return idAI::State_Torso_Pain ( parms );
+}
+
+stateResult_t rvMonsterGrunt::State_Legs_PassiveIdle ( const stateParms_t& parms ) {
+	enum {
+		STAGE_INIT_ANIM,
+		STAGE_WAIT_SPOTTED,
+	};
+	switch ( parms.stage ) {
+		case STAGE_INIT_ANIM:
+			DisableAnimState(ANIMCHANNEL_LEGS);
+			PlayAnim ( ANIMCHANNEL_LEGS, "Legs_Idle", parms.blendFrames );
+			return SRESULT_STAGE ( STAGE_WAIT_SPOTTED );
+		
+		case STAGE_WAIT_SPOTTED:
+			if (GetEnemy() && CanSee (GetEnemy(), false)) {
+				PostAnimState(ANIMCHANNEL_TORSO, "Torso_Enrage", parms.blendFrames);
+				return SRESULT_DONE;
+			}
+			return SRESULT_WAIT;
+	}
+	return SRESULT_ERROR;
 }
 
 /*

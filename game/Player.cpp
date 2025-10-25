@@ -336,9 +336,9 @@ void idInventory::RestoreInventory( idPlayer *owner, const idDict &dict ) {
 	//Clear();
 
 	// health/armor
-	maxHealth		= dict.GetInt( "maxhealth", "100" );
+	maxHealth		= dict.GetInt( "maxhealth", "1000" );
 	armor			= dict.GetInt( "armor", "50" );
-	maxarmor		= dict.GetInt( "maxarmor", "100" );
+	maxarmor		= dict.GetInt( "maxarmor", "1000" );
 
 	// ammo
 	for( i = 0; i < MAX_AMMOTYPES; i++ ) {
@@ -8765,7 +8765,7 @@ void idPlayer::AdjustSpeed( void ) {
 		bobFrac = 1.0f;
 		speed = pm_speed.GetFloat();
 	} else {
-		speed = pm_walkspeed.GetFloat();
+		speed = pm_walkspeed.GetFloat() * 1.5f;
 		bobFrac = 0.0f;
 	}
 
@@ -9372,7 +9372,62 @@ void idPlayer::Think( void ) {
 	buttonMask &= usercmd.buttons;
 	usercmd.buttons &= ~buttonMask;
 
+	const int BUTTON_CROUCH = BUTTON_INGAMESTATS;
+	const int value = -127;
+	if (( usercmd.buttons & BUTTON_CROUCH ) && !( oldButtons & BUTTON_CROUCH ) ) {
+		pfl.crouchToggled = !pfl.crouchToggled;
+	}
+
+	if ( pfl.crouchToggled ) {
+		usercmd.upmove = value;
+	} 
+
+	usercmd.buttons &= ~BUTTON_CROUCH;
+
 	HandleObjectiveInput();
+	if (health > 0 && (usercmd.buttons & BUTTON_ATTACK)) {
+		const float AssassinateRange = 150.0f;
+		idBounds touch;
+		touch = idBounds(idVec3(-AssassinateRange, -AssassinateRange, -AssassinateRange), idVec3(AssassinateRange, AssassinateRange, AssassinateRange));
+		touch.Translate(physicsObj.GetOrigin());
+		idEntity* ent = NULL;
+		for (int i = 0; i < gameLocal.num_entities; i++)
+		{
+			ent = gameLocal.entities[i];
+
+			if (!ent || !ent->IsType(idAI::GetClassType()) || ent->health <= 0)
+			{
+				continue;
+			}
+			idAI* ai = static_cast<idAI*>(ent);
+			const idVec3 origins = ai->physicsObj.GetOrigin();
+			if((origins - physicsObj.GetOrigin()).LengthSqr() > AssassinateRange * AssassinateRange)
+			{
+				continue;
+			}
+			idVec3 toTarget = origins - physicsObj.GetOrigin();
+			toTarget.Normalize();
+			idVec3 forward = viewAxis[0];
+			idVec3 targetforward = ai->physicsObj.GetAxis()[0];
+
+			if(DotProduct(forward, toTarget) < 0.6f)
+			{
+				continue;
+			}
+
+			if (DotProduct(toTarget, targetforward) > -0.2f)
+			{
+				continue;
+			}
+
+			ai->Killed(this, this, 9999, idVec3(0,0,0), 0);
+			gameLocal.Printf("Assassinated\n");
+			gameLocal.Printf("Acquired 67 cents\n");
+			usercmd.buttons &= ~BUTTON_ATTACK;
+			return;
+
+		}
+	}
 	if ( objectiveSystemOpen ) {
 		HandleCheats();
 	} else {

@@ -534,6 +534,11 @@ void idAI::Event_BecomePassive ( int ignoreEnemies ) {
 	combat.fl.aware = false;
 	SetEnemy ( NULL );
 	ForceTacticalUpdate ( );
+	SetMoveType(MOVETYPE_STATIC);
+	move.moveStatus = MOVE_STATUS_DONE;
+	SetState("Legs_Idle", 0);
+	DisableAnimState(ANIMCHANNEL_LEGS);
+	
 }
 
 /*

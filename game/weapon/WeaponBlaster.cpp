@@ -425,15 +425,20 @@ stateResult_t rvWeaponBlaster::State_Fire ( const stateParms_t& parms ) {
 			}
 
 
-	
+			StopSound(SND_CHANNEL_WEAPON, false);
+			StopSound(SND_CHANNEL_BODY, false);
+			StopSound(SND_CHANNEL_ANY, false);
 			if ( gameLocal.time - fireHeldTime > chargeTime ) {	
 				Attack ( true, 1, spread, 0, 1.0f );
-				PlayEffect ( "fx_chargedflash", barrelJointView, false );
+				//PlayEffect ( "fx_chargedflash", barrelJointView, false );
+				StopSound(SND_CHANNEL_WEAPON, false);
 				PlayAnim( ANIMCHANNEL_ALL, "chargedfire", parms.blendFrames );
 			} else {
 				Attack ( false, 10, 10, 0, 0.2f );
-				PlayEffect ( "fx_normalflash", barrelJointView, false );
+				//PlayEffect ( "fx_normalflash", barrelJointView, false );
+				StopSound(SND_CHANNEL_WEAPON, false);
 				PlayAnim( ANIMCHANNEL_ALL, "fire", parms.blendFrames );
+				
 			}
 			fireHeldTime = 0;
 			

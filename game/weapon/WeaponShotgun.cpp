@@ -49,7 +49,7 @@ rvWeaponShotgun::Spawn
 */
 void rvWeaponShotgun::Spawn( void ) {
 	hitscans   = spawnArgs.GetFloat( "hitscans" );
-	
+	clipSize = 1;
 	SetState( "Raise", 0 );	
 }
 
@@ -164,24 +164,24 @@ stateResult_t rvWeaponShotgun::State_Fire( const stateParms_t& parms ) {
 	switch ( parms.stage ) {
 		case STAGE_INIT:
 			nextAttackTime = gameLocal.time + (fireRate * owner->PowerUpModifier ( PMOD_FIRERATE ));
-			Attack( false, hitscans, spread, 0, 1.0f );
-			PlayAnim( ANIMCHANNEL_ALL, "fire", 0 );	
+			Attack( false, 1, 0.0f, 0, 1.0f );
+			PlayAnim( ANIMCHANNEL_ALL, "idle", 0 );	
 			return SRESULT_STAGE( STAGE_WAIT );
 	
 		case STAGE_WAIT:
-			if ( (!gameLocal.isMultiplayer && (wsfl.lowerWeapon || AnimDone( ANIMCHANNEL_ALL, 0 )) ) || AnimDone( ANIMCHANNEL_ALL, 0 ) ) {
-				SetState( "Idle", 0 );
+			if (AnimDone(ANIMCHANNEL_ALL, 0))
+			{
+				wsfl.attack = false;
+				if (AmmoAvailable())
+				{
+					SetState("Reload", 4);
+				}
+				else {
+					SetState("Idle", 0);
+				}
+
 				return SRESULT_DONE;
-			}									
-			if ( wsfl.attack && gameLocal.time >= nextAttackTime && AmmoInClip() ) {
-				SetState( "Fire", 0 );
-				return SRESULT_DONE;
-			}
-			if ( clipSize ) {
-				if ( (wsfl.netReload || (wsfl.reload && AmmoInClip() < ClipSize() && AmmoAvailable()>AmmoInClip())) ) {
-					SetState( "Reload", 4 );
-					return SRESULT_DONE;			
-				}				
+
 			}
 			return SRESULT_WAIT;
 	}
@@ -212,14 +212,9 @@ stateResult_t rvWeaponShotgun::State_Reload ( const stateParms_t& parms ) {
 			}
 			
 			SetStatus ( WP_RELOAD );
-			
-			if ( mods & SHOTGUN_MOD_AMMO ) {				
-				PlayAnim ( ANIMCHANNEL_ALL, "reload_clip", parms.blendFrames );
-			} else {
-				PlayAnim ( ANIMCHANNEL_ALL, "reload_start", parms.blendFrames );
-				return SRESULT_STAGE ( STAGE_RELOADSTARTWAIT );
-			}
-			return SRESULT_STAGE ( STAGE_WAIT );
+
+			PlayAnim(ANIMCHANNEL_ALL, "reload_clip", parms.blendFrames);
+			return SRESULT_STAGE(STAGE_WAIT);
 			
 		case STAGE_WAIT:
 			if ( AnimDone ( ANIMCHANNEL_ALL, 4 ) ) {
